@@ -20,7 +20,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 
-const API_BASE_URL = "https://crimestatapi.rvcodes.com"
+const API_BASE_URL = "https://crimestatapi.ridmd12.com"
 
 export default function ModernCrimeStatsDashboard() {
   const [files, setFiles] = React.useState<File[]>([])
