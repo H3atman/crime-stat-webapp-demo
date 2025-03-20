@@ -324,7 +324,7 @@ export default function ModernCrimeStatsDashboard() {
           <CardContent>
             <ol className="space-y-4 list-decimal list-inside text-muted-foreground">
               <li>Upload one or more Detailed Crime Analysis Excel files (.xls, .xlsx) from CIRAS v2</li>
-              <li>Click <strong>"Process Files"</strong> to automatically:
+              <li>Click <strong>&quot;Process Files&quot;</strong> to automatically:
                 <ul className="ml-6 mt-2 list-disc space-y-2">
                   <li>Merge multiple data files into a unified dataset</li>
                   <li><strong>Add OFFENSE CATEGORY</strong> column based on crime descriptions</li>

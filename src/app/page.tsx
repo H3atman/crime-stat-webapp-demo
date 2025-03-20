@@ -12,7 +12,7 @@ export default function Home() {
             Crime Data Classification Tool
           </h1>
           <p className="mt-2 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            A tool for processing and classifying crime data from the Philippine National Police's CIRAS system, following official PNP guidelines. Automatically adds OFFENSE CATEGORY columns and simplifies the 8 Focus Crimes Classification for streamlined reporting.
+            A tool for processing and classifying crime data from the Philippine National Police&apos;s CIRAS system, following official PNP guidelines. Automatically adds OFFENSE CATEGORY columns and simplifies the 8 Focus Crimes Classification for streamlined reporting.
           </p>
         </div>
         
