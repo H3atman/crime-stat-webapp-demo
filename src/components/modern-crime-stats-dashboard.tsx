@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { FileSpreadsheet, Moon, Sun, Upload, X, Trash2 } from "lucide-react"
+import { FileSpreadsheet, Moon, Sun, Upload, X, Trash2, Download } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -19,8 +19,7 @@ import { useToast } from "@/hooks/use-toast"
 
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-
-const API_BASE_URL = "https://crimestatapi.ridmd12.com"
+import { API_ROUTES } from "@/lib/constants"
 
 export default function ModernCrimeStatsDashboard() {
   const [files, setFiles] = React.useState<File[]>([])
@@ -90,7 +89,7 @@ export default function ModernCrimeStatsDashboard() {
         setProgress((prev) => Math.min(prev + 5, 90))
       }, 500)
 
-      const response = await fetch(`${API_BASE_URL}/process-crimes/`, {
+      const response = await fetch(API_ROUTES.PROCESS_FILES, {
         method: "POST",
         body: formData,
       })
@@ -104,7 +103,7 @@ export default function ModernCrimeStatsDashboard() {
       }
 
       const data = await response.json()
-      setDownloadUrl(`${API_BASE_URL}${data.download_url}`)
+      setDownloadUrl(data.download_url)
       
       toast({
         title: "Success",
@@ -146,7 +145,6 @@ export default function ModernCrimeStatsDashboard() {
       const filename = filenameMatch?.[1]?.replace('.xlsx', '') || 'processed_crime_stats'
       const finalFilename = `${filename}_${formattedTimestamp}.xlsx`
 
-
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -171,10 +169,26 @@ export default function ModernCrimeStatsDashboard() {
     }
   }
 
+  const handleSampleDownload = () => {
+    const sampleFileUrl = '/sample-data.xlsx';
+    const a = document.createElement('a');
+    a.href = sampleFileUrl;
+    a.download = 'pnp-ciras-sample-data.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(sampleFileUrl);
+    document.body.removeChild(a);
+    
+    toast({
+      title: "Sample PNP CIRAS File Downloaded",
+      description: "Use this sample file to test the 8 Focus Crimes classification and OFFENSE CATEGORY features.",
+    });
+  };
+
   return (
     <div className={cn("min-h-screen bg-background text-foreground")}>
       <header className="border-b p-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">CIRASv2 Crime Statistics Classification</h1>
+        <h1 className="text-2xl font-bold">CIRAS-Link: Crime Data Classification Tool</h1>
         <div className="flex items-center space-x-2">
           <Sun className="h-4 w-4" />
           <Switch checked={isDarkMode} onCheckedChange={setIsDarkMode} />
@@ -185,12 +199,22 @@ export default function ModernCrimeStatsDashboard() {
       <main className="container mx-auto p-6 space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Upload and Process Files</CardTitle>
+            <CardTitle>Transform Crime Statistics Data</CardTitle>
             <CardDescription>
-              Drag and drop your crime statistics files or click to select
+              Process CIRAS v2 crime data files to add OFFENSE CATEGORY classifications and standardize the 8 Focus Crimes for PNP reporting
             </CardDescription>
           </CardHeader>
           <CardContent>
+            <div className="mb-4">
+              <Button 
+                onClick={handleSampleDownload} 
+                variant="outline" 
+                className="w-full border-dashed border-blue-400 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Download Sample PNP CIRAS Data with Focus Crimes
+              </Button>
+            </div>
             <div
               onDragOver={handleDragOver}
               onDrop={handleDrop}
@@ -295,26 +319,34 @@ export default function ModernCrimeStatsDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Instructions</CardTitle>
+            <CardTitle>How to Use This Tool</CardTitle>
           </CardHeader>
           <CardContent>
             <ol className="space-y-4 list-decimal list-inside text-muted-foreground">
-              <li>Upload Detailed Crime Analysis files extracted from CIRAS v2</li>
-              <li>Click &quot;Process Files&quot; to begin merging and categorizing</li>
-              <li>Once complete, click &quot;Download Result&quot; to get your processed file</li>
-              <li>The processed file will contain:
+              <li>Upload one or more Detailed Crime Analysis Excel files (.xls, .xlsx) from CIRAS v2</li>
+              <li>Click <strong>"Process Files"</strong> to automatically:
                 <ul className="ml-6 mt-2 list-disc space-y-2">
-                  <li>Merged data from all uploaded files</li>
-                  <li>Categorized crimes based on official classifications</li>
+                  <li>Merge multiple data files into a unified dataset</li>
+                  <li><strong>Add OFFENSE CATEGORY</strong> column based on crime descriptions</li>
+                  <li><strong>Simplify the 8 Focus Crimes</strong> into standardized classifications</li>
+                  <li>Format data for compatibility with PNP reporting systems</li>
                 </ul>
               </li>
+              <li>When processing completes, download your formatted file for immediate use in reports</li>
+              <li>Save hours of manual data formatting and classification work with a single click</li>
             </ol>
+            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md text-sm text-blue-700 dark:text-blue-300">
+              <p className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+                Data processing is performed by a high-performance Fast API Python backend, enabling efficient handling of large datasets.
+              </p>
+            </div>
           </CardContent>
         </Card>
       </main>
 
       <footer className="border-t p-4 text-center text-sm text-muted-foreground">
-        <p>&copy; 2024 Crime Statistics Dashboard. All rights reserved.</p>
+        <p>&copy; 2024 CIRAS-Link Data Processing Tool. All rights reserved.</p>
       </footer>
     </div>
   )
